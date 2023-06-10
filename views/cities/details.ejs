@@ -1,0 +1,23 @@
+<% layout("layouts/boilerplate") %>
+
+    <br>
+    <h1>City details:</h1>
+    <ul>
+        <li> Country: <%= city.country  %>  </li>
+        <li> City: <%= city.city  %>  </li>
+        <li> Latitude: <%= city.latitude  %>  </li>
+        <li> Longitude: <%= city.longitude  %>  </li>
+        <li> Description: <%= city.description  %>  </li>
+        <li> ImageURL: <%= city.image  %>  </li>
+    </ul>
+    <hr>
+    <img src="<%= city.image %>" class="img-fluid">
+
+    <hr>
+    <h2><a href="/cities/<%= city._id %>/edit" class="btn btn-primary">Edit</a></h2>
+    
+    <form action="/cities/<%= city.id %>?_method=DELETE" method="POST"onsubmit="return confirm('Are you sure you want to delete this city?');" class="d-inline">
+        <button type="submit" class="btn btn-danger">DELETE</button>
+    </form>
+
+    <hr>

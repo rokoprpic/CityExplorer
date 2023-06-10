@@ -1,0 +1,48 @@
+<% layout("layouts/boilerplate") %>
+    
+<h1>Add new city</h1>
+<form action="/cities" method="post" class="needs-validation" novalidate>
+    <div class="mb-3">
+        <label for="country" class="form-label">Country name:</label>
+        <div class="col-sm-4">
+            <input type="text" id="country" name="city[country]" class="form-control" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="city" class="form-label">City name:</label>
+        <div class="col-sm-4">
+            <input type="text" id="city" name="city[city]" class="form-control" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="latitude" class="form-label">Latitude:</label>
+        <div class="col-sm-4">
+            <input type="text" id="latitude" name="city[latitude]" class="form-control" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="longitude" class="form-label">Longitude:</label>
+        <div class="col-sm-4">
+            <input type="text" id="longitude" name="city[longitude]" class="form-control" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description:</label>
+        <div class="col-sm-4">
+            <input type="text" id="description" name="city[description]" class="form-control" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="image" class="form-label">Image:</label>
+        <div class="col-sm-4">
+            <input type="text" id="image" name="city[image]" class="form-control" placeholder="imageURL" required>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+
+
+    <!-- <hr>
+    <h2><a href="/cities">Return to cities list</a></h2> -->
