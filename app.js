@@ -1,13 +1,14 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const ejsMate = require("ejs-mate");
-const { citySchema } = require("./schemas.js");
+//const ejsMate = require("ejs-mate");
+const { citySchema, reviewSchema } = require("./schemas.js");
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
 const engine = require("ejs-mate");
 const City = require("./models/city")
 const methodOveride = require("method-override");
+const Review = require("./models/review.js");
 
 
 mongoose.connect("mongodb://127.0.0.1:27017/CityExplorer", {
@@ -40,6 +41,16 @@ const validateCity = (req, res, next) => {
     }
 }
 
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(",");
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+}
+
 app.get("/", (req, res) => {
     res.render("home");
 });
@@ -54,7 +65,6 @@ app.get("/cities/new", (req, res) => {
 });
 
 app.post("/cities", validateCity, catchAsync(async (req, res) => {
-    //if(!req.body.city) throw new ExpressError("Invalid City Data", 400);
     const { country, city, latitude, longitude, description, image } = req.body.city;
     const newCity = new City({ country, city, latitude, longitude, description, image });
     await newCity.save();
@@ -62,7 +72,7 @@ app.post("/cities", validateCity, catchAsync(async (req, res) => {
 }));
 
 app.get("/cities/:id", catchAsync(async (req, res) => {
-    const city = await City.findById(req.params.id);
+    const city = await City.findById(req.params.id).populate("reviews");
     res.render("cities/details", { city });
 }));
 
@@ -79,6 +89,22 @@ app.put("/cities/:id", validateCity, catchAsync(async (req, res) => {
 app.delete("/cities/:id", catchAsync(async (req, res) => {
     await City.findByIdAndDelete(req.params.id);
     res.redirect("/cities");
+}));
+
+app.post("/cities/:id/reviews", validateReview, catchAsync( async(req, res) => {
+    const city = await City.findById(req.params.id);
+    const review = new Review(req.body.review);
+    city.reviews.push(review);
+    await review.save();
+    await city.save();
+    res.redirect(`/cities/${city._id}`);
+}));
+
+app.delete("/cities/:id/reviews/:reviewId", catchAsync(async (req, res) => {
+    const { id, reviewId } = req.params;
+    await City.findByIdAndUpdate(id, {$pull: {reviews: reviewId }});
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/cities/${id}`);
 }));
 
 app.all("*", (reg, res, next) => {
